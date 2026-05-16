@@ -95,10 +95,10 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
 <div class="toast" id="toast"></div>
 <script>
 var DEX={
-  "LUNDI - DOS":["SDT - Top set","SDT - Back-off","Tirage vertical poulie haute unilateral","Rowing Hammer focus trapezes","Pull-over poulie","Oiseau halteres buste penche","Back extension","Mollets (echauffement SDT)"],
+  "LUNDI - DOS":["SDT - Top set","SDT - Back-off","Mollets (echauffement SDT)","Tirage vertical poulie haute unilateral","Rowing Hammer focus trapezes","Pull-over poulie","Oiseau halteres buste penche","Back extension"],
   "MERCREDI - BI/PECS":["DC barre - Top set","DC barre - Back-off","Curl incline halteres (Double Contraction)","Curl pupitre","Tractions prise neutre","Developpe Hammer convergente unilateral","Pec dec"],
-  "JEUDI - JAMBES":["Squat barre basse - Top set","Squat barre basse - Back-off","Presse inclinee","Mollets presse","SDT jambes tendues halteres","Leg curl assis","Leg extension machine","Adducteurs machine","Abducteurs machine"],
-  "SAMEDI - EP/TRI/BI":["Dev. militaire barre - Top set","Dev. militaire barre - Back-off","Magic triceps barre EZ","Reverse curl barre EZ","Elev. lat. assis halteres","Elev. lat. poulie basse","Oiseau poulie","Extension triceps poulie","Curl biceps poulie"],
+  "JEUDI - JAMBES":["Squat barre basse - Top set","Squat barre basse - Back-off","Presse inclinee","Mollets presse","SDT jambes tendues halteres","Adducteurs machine","Abducteurs machine","[OPT] Leg curl assis"],
+  "SAMEDI - EP/TRI/BI":["Dev. militaire barre - Top set","Dev. militaire barre - Back-off","Elev. lat. assis halteres","Elev. lat. poulie basse","Oiseau poulie","Shrug halteres","Flexion / extension cou harnais","Extension cou machine ischio","Magic triceps EZ + Reverse curl EZ","Curl biceps poulie"],
   "Cardio / autre":[]
 };
 var db={sessions:[],customEx:{}};
@@ -108,6 +108,33 @@ var openP={};
 
 function sv(){try{localStorage.setItem('bt_v3',JSON.stringify(db));}catch(e){}}
 function ld(){try{var r=localStorage.getItem('bt_v3');if(r)db=JSON.parse(r);}catch(e){}}
+
+// Draft autosave - saves in-progress session
+function saveDraft(){
+  try{
+    var type=document.getElementById('s-type')?document.getElementById('s-type').value:'';
+    var date=document.getElementById('s-date')?document.getElementById('s-date').value:td();
+    var exs=curEx.filter(Boolean).map(function(ex,i){
+      var ri=curEx.indexOf(ex);
+      var sel=document.getElementById('es-'+ri);
+      var name=sel&&sel.value!=='__c__'?sel.value:(document.getElementById('eci-'+ri)?document.getElementById('eci-'+ri).value.trim():ex.name);
+      return {name:name,sets:ex.sets};
+    }).filter(function(ex){return ex.name;});
+    localStorage.setItem('bt_draft',JSON.stringify({date:date,type:type,exercises:exs,ts:Date.now()}));
+  }catch(e){}
+}
+
+function loadDraft(){
+  try{
+    var r=localStorage.getItem('bt_draft');
+    if(r){var d=JSON.parse(r);return d;}
+  }catch(e){}
+  return null;
+}
+
+function clearDraft(){
+  try{localStorage.removeItem('bt_draft');}catch(e){}
+}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
 function td(){return new Date().toISOString().split('T')[0];}
 function fd(s){return new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});}
@@ -136,7 +163,17 @@ function SP(p){
 function RS(){
   var el=document.getElementById('pg-saisie');
   var types=Object.keys(AE());
-  el.innerHTML='<div class="card"><div class="ct">Nouvelle seance</div>'
+  var draft=loadDraft();
+  var hasDraft=draft&&draft.exercises&&draft.exercises.length>0;
+
+  el.innerHTML=(hasDraft?'<div style="background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.3);border-radius:var(--r);padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">'
+  +'<div><div style="font-size:12px;font-weight:700;color:var(--blue)">Seance en cours recuperee</div>'
+  +'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+draft.type+' — '+(draft.exercises.length)+' exo(s)</div></div>'
+  +'<div style="display:flex;gap:6px">'
+  +'<button class="btn-e" onclick="restoreDraft()">Reprendre</button>'
+  +'<button class="btn-d" onclick="discardDraft()">Suppr.</button>'
+  +'</div></div>':'')
+  +'<div class="card"><div class="ct">Nouvelle seance</div>'
   +'<div class="field"><label>Date</label><input type="date" id="s-date" value="'+td()+'"/></div>'
   +'<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
   +types.map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></div></div>'
@@ -145,6 +182,49 @@ function RS(){
   +'<div style="margin-top:6px"><button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button></div>';
   curEx=[];
   AddEx();
+}
+
+function restoreDraft(){
+  var draft=loadDraft();
+  if(!draft)return;
+  var el=document.getElementById('pg-saisie');
+  var types=Object.keys(AE());
+  el.innerHTML='<div class="card"><div class="ct">Nouvelle seance</div>'
+  +'<div class="field"><label>Date</label><input type="date" id="s-date" value="'+draft.date+'"/></div>'
+  +'<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
+  +types.map(function(t){return '<option'+(t===draft.type?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div></div>'
+  +'<div id="ex-list"></div>'
+  +'<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
+  +'<div style="margin-top:6px"><button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button></div>';
+  curEx=[];
+  draft.exercises.forEach(function(ex){
+    var ae=AE();
+    var exList=ae[draft.type]||[];
+    var idx=curEx.length;
+    curEx.push({name:ex.name,sets:ex.sets.length?ex.sets:[{c:'',r:'',rpe:''}]});
+    var container=document.getElementById('ex-list');
+    var div=document.createElement('div');
+    div.className='ex-block';
+    var isCustom=!exList.includes(ex.name);
+    div.innerHTML='<div class="ex-hdr"><span class="ex-num">Exercice '+(idx+1)+'</span>'
+    +'<button class="btn-d" onclick="RemEx('+idx+')">Supprimer</button></div>'
+    +'<div class="field" style="margin-bottom:8px"><select id="es-'+idx+'" onchange="OnSel('+idx+')">'
+    +exList.map(function(e){return '<option value="'+e+'"'+(ex.name===e?' selected':'')+'>'+e+'</option>';}).join('')
+    +'<option value="__c__"'+(isCustom?' selected':'')+'>Autre (saisie libre)...</option>'
+    +'</select></div>'
+    +'<div id="ec-'+idx+'" style="display:'+(isCustom?'':'none')+';" class="field">'
+    +'<input type="text" id="eci-'+idx+'" placeholder="Nom" value="'+(isCustom?ex.name:'')+'" oninput="curEx['+idx+'].name=this.value;saveDraft()"/></div>'
+    +'<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
+    +'<div id="sr-'+idx+'"></div>'
+    +'<button class="as" onclick="AddSet('+idx+')">+ Serie</button>';
+    container.appendChild(div);
+    RndSets(idx);
+  });
+}
+
+function discardDraft(){
+  clearDraft();
+  RS();
 }
 
 function RstEx(){curEx=[];document.getElementById('ex-list').innerHTML='';AddEx();}
@@ -191,18 +271,20 @@ function OnSel(idx){
   else{cw.style.display='none';curEx[idx].name=sel.value;}
 }
 
-function RemEx(idx){curEx[idx]=null;RenderExList();}
+function RemEx(idx){curEx[idx]=null;RenderExList();saveDraft();}
 
 function AddSet(idx){
   if(!curEx[idx])return;
   curEx[idx].sets.push({c:'',r:'',rpe:''});
   RndSets(idx);
+  saveDraft();
 }
 
 function RemSet(idx,si){
   if(!curEx[idx]||curEx[idx].sets.length<=1)return;
   curEx[idx].sets.splice(si,1);
   RndSets(idx);
+  saveDraft();
 }
 
 function RndSets(idx){
@@ -210,9 +292,9 @@ function RndSets(idx){
   if(!el||!curEx[idx])return;
   el.innerHTML=curEx[idx].sets.map(function(s,si){
     return '<div class="sr"><div class="sn">'+(si+1)+'</div>'
-    +'<input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="'+(s.c||'')+'" onchange="curEx['+idx+'].sets['+si+'].c=this.value"/>'
-    +'<input type="number" inputmode="numeric" placeholder="reps" value="'+(s.r||'')+'" onchange="curEx['+idx+'].sets['+si+'].r=this.value"/>'
-    +'<select onchange="curEx['+idx+'].sets['+si+'].rpe=this.value"><option value="">-</option>'
+    +'<input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="'+(s.c||'')+'" onchange="curEx['+idx+'].sets['+si+'].c=this.value;saveDraft()"/>'
+    +'<input type="number" inputmode="numeric" placeholder="reps" value="'+(s.r||'')+'" onchange="curEx['+idx+'].sets['+si+'].r=this.value;saveDraft()"/>'
+    +'<select onchange="curEx['+idx+'].sets['+si+'].rpe=this.value;saveDraft()"><option value="">-</option>'
     +[6,7,7.5,8,8.5,9,9.5,10].map(function(x){return '<option value="'+x+'"'+(s.rpe==x?' selected':'')+'>'+x+'</option>';}).join('')
     +'</select><button class="sd" onclick="RemSet('+idx+','+si+')">x</button></div>';
   }).join('');
@@ -229,7 +311,9 @@ function SaveSes(){
   }).filter(function(ex){return ex.name&&ex.sets.length;});
   if(!exs.length){toast('Remplis au moins un exercice');return;}
   db.sessions.push({id:Date.now(),date:date,type:type,exercises:exs});
-  sv();toast('Seance enregistree');
+  sv();
+  clearDraft();
+  toast('Seance enregistree !');
   curEx=[];
   document.getElementById('ex-list').innerHTML='';
   document.getElementById('s-date').value=td();
