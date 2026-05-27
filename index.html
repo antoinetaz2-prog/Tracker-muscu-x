@@ -95,10 +95,10 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
 <div class="toast" id="toast"></div>
 <script>
 var DEX={
-  "PUSH A":["Squat barre haute - Top set","Squat barre haute - Back-off","Bench barre - Top set","Bench barre - Back-off","Presse inclinee","Mollets presse","Leg extension machine","Adducteurs machine"],
-  "PUSH B":["Squat barre haute - Top set","Squat barre haute - Back-off","Bench barre pose - Top set","Bench barre pose - Back-off","Dev. halteres incline","Elev. lat. assis halteres","Magic triceps EZ"],
-  "PULL A":["SDT conventionnel - Top set","SDT conventionnel - Back-off","Tirage vertical poulie haute unilateral","Rowing Hammer focus trapezes","Pull-over poulie","Curl incline halteres (DC)","Curl pupitre"],
-  "PULL B":["SDT roumain - Top set","SDT roumain - Back-off","Leg curl assis machine","Oiseau halteres buste penche","Tractions prise neutre","Flexion / extension cou harnais","Shrug barre","Curl halteres marteau"],
+  "UPPER 1":["Bench barre - Top set","Bench barre - Back-off 1","Bench barre - Back-off 2","Chin-Up","Band Pull Apart","DB Incline Press","Wide Grip Pull-Down","Weighted Dips","Curl incline halteres (DC)","DB Rear Raise","DB Lateral Raise","DB Front Raise"],
+  "UPPER 2":["Militaire assis barre - Top set","Militaire assis barre - Back-off 1","Militaire assis barre - Back-off 2","Chin-Up","Band Pull Apart","Close Grip Bench Press","Tirage horizontal poulie basse","Cable Extension","Cable Curl","Reverse Pec Deck","DB Front Raise"],
+  "LOWER 1":["Squat barre haute - Top set","Squat barre haute - Back-off 1","Squat barre haute - Back-off 2","Tibialis Raises","Fentes bulgares halteres","Calves Raises","Leg Extension","Leg Curl","Back Extension leste","Ab wheel"],
+  "LOWER 2":["SDT conventionnel - Top set","SDT conventionnel - Back-off 1","SDT conventionnel - Back-off 2","DB Calves Raises","Squat cyclist","Seated Calves Raises","BB Shrug","Rowing Hammer focus trapezes","Back Extension dos arrondi","Toes to Bar"],
   "Cardio / autre":[]
 }
 var db={sessions:[],customEx:{}};
@@ -422,74 +422,129 @@ function CM(){document.getElementById('edit-modal').classList.remove('open');edi
 // ---- PERFS ----
 function RP(){
   var el=document.getElementById('pg-perfs');
-  var search=(document.getElementById('ps')?document.getElementById('ps').value:'').toLowerCase();
+
+  // Build exercise list with all sessions data
   var pm={};
   db.sessions.forEach(function(s){
     s.exercises.forEach(function(ex){
       if(!pm[ex.name])pm[ex.name]=[];
-      var best=ex.sets.reduce(function(b,st){return(!b||parseFloat(st.c||0)>parseFloat(b.c||0))?st:b;},null);
-      if(best&&(best.c||best.r))pm[ex.name].push({date:s.date,best:best});
+      var best=0;
+      ex.sets.forEach(function(set){if(parseFloat(set.c)>best)best=parseFloat(set.c);});
+      if(best>0)pm[ex.name].push({date:s.date,kg:best,type:s.type});
     });
   });
-  var names=Object.keys(pm).filter(function(n){return !search||n.toLowerCase().includes(search);}).sort();
-  el.innerHTML='<input class="sb" type="text" id="ps" placeholder="Rechercher..." oninput="RP()" value="'+search+'"/>'
-  +(names.length?names.map(function(name){
-    var hist=pm[name].sort(function(a,b){return b.date.localeCompare(a.date);});
-    var lat=hist[0],prv=hist[1];
-    var delta=lat&&prv?parseFloat(lat.best.c||0)-parseFloat(prv.best.c||0):null;
-    var io=openP[name];
-    return '<div class="pc" onclick="TP(\''+encodeURIComponent(name)+'\')">'
-    +'<div style="font-size:14px;font-weight:700;margin-bottom:5px">'+name+'</div>'
-    +'<div style="display:flex;align-items:baseline;gap:10px">'
-    +'<div style="font-size:24px;font-weight:900;color:var(--accent)">'+(lat.best.c||'?')+' <span style="font-size:13px;font-weight:400;color:var(--text2)">kg</span></div>'
-    +'<div style="font-size:12px;color:var(--text2)">x '+(lat.best.r||'?')+'</div>'
-    +(delta!==null?'<span class="badge '+(delta>0?'bu':delta<0?'bd':'be')+'">'+(delta>0?'+':'')+delta+'kg</span>':'')
-    +'</div>'
-    +'<div style="font-size:11px;color:var(--text2);margin-top:3px">'+fd(lat.date)+(lat.best.rpe?' RPE'+lat.best.rpe:'')+'</div>'
-    +'<div class="ph'+(io?' open':'') +'">'
-    +hist.map(function(h){return '<div class="pr"><span style="color:var(--text2)">'+fd(h.date)+'</span><span>'+(h.best.c||'?')+'kg x '+(h.best.r||'?')+(h.best.rpe?' RPE'+h.best.rpe:'')+'</span></div>';}).join('')
-    +'</div><div style="text-align:center;font-size:11px;color:var(--text2);margin-top:6px">'+(io?'Masquer':'Historique')+'</div></div>';
-  }).join(''):'<div class="empty">Aucune perf enregistree.</div>');
+
+  // Sort exercises alphabetically
+  var exNames=Object.keys(pm).sort();
+  if(!exNames.length){
+    el.innerHTML='<div style="text-align:center;padding:40px 14px;color:var(--text2);font-size:13px">Aucune seance enregistree.<br>Commence par saisir ta premiere seance.</div>';
+    return;
+  }
+
+  // Get selected exercise (stored in state)
+  if(!window._perfEx || !pm[window._perfEx]) window._perfEx = exNames[0];
+  var selEx = window._perfEx;
+  var data = pm[selEx] ? pm[selEx].sort(function(a,b){return a.date.localeCompare(b.date);}) : [];
+
+  // PR info
+  var pr = data.length ? data.reduce(function(a,b){return b.kg>a.kg?b:a;}) : null;
+  var first = data.length ? data[0] : null;
+  var last = data.length ? data[data.length-1] : null;
+  var delta = (first && last && first.kg!==last.kg) ? (last.kg - first.kg).toFixed(1) : null;
+
+  var html = '<div class="card"><div class="ct">Choisir un exercice</div>'
+    + '<div style="position:relative;margin-bottom:4px">'
+    + '<select id="ex-sel" onchange="window._perfEx=this.value;RP()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none">'
+    + exNames.map(function(n){return '<option value="'+n+'"'+(n===selEx?' selected':'')+'>'+n+'</option>';}).join('')
+    + '</select>'
+    + '<div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text2);pointer-events:none">▼</div>'
+    + '</div></div>';
+
+  if(data.length > 0){
+    // Stats row
+    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px">'
+      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
+      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">PR</div>'
+      + '<div style="font-size:18px;font-weight:700;color:var(--gold)">'+(pr?pr.kg:'-')+' kg</div>'
+      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(pr?fd(pr.date):'')+'</div>'
+      + '</div>'
+      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
+      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">DERNIERE</div>'
+      + '<div style="font-size:18px;font-weight:700;color:var(--text)">'+(last?last.kg:'-')+' kg</div>'
+      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(last?fd(last.date):'')+'</div>'
+      + '</div>'
+      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
+      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">EVOLUTION</div>'
+      + '<div style="font-size:18px;font-weight:700;color:'+(delta?(parseFloat(delta)>0?'var(--green)':'var(--red)'):'var(--text2)')+'">'+(delta?(parseFloat(delta)>0?'+':'')+delta+' kg':'—')+'</div>'
+      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(data.length)+' seances</div>'
+      + '</div></div>';
+
+    // Chart
+    if(data.length > 1){
+      html += '<div class="card"><div style="height:200px;position:relative"><canvas id="perf-chart"></canvas></div></div>';
+    }
+
+    // History list
+    html += '<div class="card"><div class="ct">Historique</div>'
+      + data.slice().reverse().map(function(d,i,arr){
+          var prev=arr[i+1];
+          var diff=prev?((d.kg-prev.kg).toFixed(1)):null;
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">'
+            +'<div><div style="font-size:11px;color:var(--text2)">'+fd(d.date)+'</div>'
+            +'<div style="font-size:12px;color:var(--text2)">'+d.type+'</div></div>'
+            +'<div style="display:flex;align-items:center;gap:8px">'
+            +(diff!==null?'<span style="font-size:11px;padding:2px 7px;border-radius:20px;background:'+(parseFloat(diff)>0?'rgba(74,222,128,0.15)':parseFloat(diff)<0?'rgba(248,113,113,0.15)':'rgba(136,136,153,0.15)')+';color:'+(parseFloat(diff)>0?'var(--green)':parseFloat(diff)<0?'var(--red)':'var(--text2)')+';">'+(parseFloat(diff)>0?'+':'')+diff+'</span>':'')
+            +'<div style="font-size:16px;font-weight:700;color:var(--accent)">'+d.kg+' kg</div>'
+            +'</div></div>';
+        }).join('')
+      + '</div>';
+  } else {
+    html += '<div style="text-align:center;padding:30px;color:var(--text2);font-size:13px">Aucune donnee pour cet exercice.</div>';
+  }
+
+  el.innerHTML = html;
+
+  // Draw chart
+  if(data.length > 1){
+    setTimeout(function(){
+      var ctx = document.getElementById('perf-chart');
+      if(!ctx) return;
+      if(window._perfChart){window._perfChart.destroy();window._perfChart=null;}
+      var isPR = data.map(function(d){
+        return d.kg === pr.kg;
+      });
+      window._perfChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(function(d){return fd(d.date);}),
+          datasets: [{
+            data: data.map(function(d){return d.kg;}),
+            borderColor: 'var(--accent)',
+            backgroundColor: 'rgba(233,69,96,0.08)',
+            pointBackgroundColor: data.map(function(d){return d.kg===pr.kg?'var(--gold)':'var(--accent)';}),
+            pointBorderColor: data.map(function(d){return d.kg===pr.kg?'var(--gold)':'var(--accent)';}),
+            pointRadius: data.map(function(d){return d.kg===pr.kg?7:4;}),
+            tension: 0.3,
+            fill: true,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: {display:false},
+            tooltip: {callbacks:{label:function(ctx){return ctx.parsed.y+' kg'+(ctx.parsed.y===pr.kg?' ★ PR':'');}}}
+          },
+          scales: {
+            x: {ticks:{font:{size:10},maxRotation:40,maxTicksLimit:8},grid:{display:false}},
+            y: {ticks:{font:{size:11}},grid:{color:'rgba(128,128,128,0.1)'}}
+          }
+        }
+      });
+    }, 100);
+  }
 }
 
-function TP(enc){var n=decodeURIComponent(enc);openP[n]=!openP[n];RP();}
-
-// ---- EXERCICES PERSO ----
-function exportData(){
-  var data=JSON.stringify(db,null,2);
-  var blob=new Blob([data],{type:'application/json'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='bt_tracker_backup_'+td()+'.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  toast('Sauvegarde exportee');
-}
-
-function importData(){
-  var input=document.createElement('input');
-  input.type='file';
-  input.accept='.json';
-  input.onchange=function(e){
-    var file=e.target.files[0];
-    if(!file)return;
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      try{
-        var parsed=JSON.parse(ev.target.result);
-        if(!parsed.sessions){toast('Fichier invalide');return;}
-        if(!confirm('Remplacer toutes les donnees actuelles par cette sauvegarde ?'))return;
-        db=parsed;
-        sv();
-        toast('Donnees restaurees — '+parsed.sessions.length+' seances');
-        SP('saisie');
-      }catch(e){toast('Erreur de lecture du fichier');}
-    };
-    reader.readAsText(file);
-  };
-  input.click();
-}
 
 function RX(){
   var el=document.getElementById('pg-exercices');
