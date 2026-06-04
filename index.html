@@ -6,540 +6,514 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="B&T Tracker">
-<title>Blood & Turbo — Tracker</title>
+<title>Blood & Turbo Tracker</title>
 <style>
-:root{--bg:#0a0a10;--bg2:#12121e;--bg3:#1a1a28;--border:#252535;--text:#e0e0ee;--text2:#888899;--accent:#e94560;--gold:#f5a623;--green:#4ade80;--red:#f87171;--blue:#4a9eff;--r:12px;--rs:8px;}
+:root{--bg:#0a0a10;--bg2:#12121e;--bg3:#1a1a28;--border:#252535;--text:#e0e0ee;--text2:#888899;--accent:#e94560;--gold:#f5a623;--green:#4ade80;--red:#f87171;--blue:#4a9eff;--purple:#c084fc;--r:12px;--rs:8px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:15px;overscroll-behavior:none;}
 body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
-.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 16px;}
-.hdr-t{font-size:17px;font-weight:900;letter-spacing:2px;color:var(--accent);}
-.hdr-s{font-size:10px;color:var(--text2);margin-top:1px;}
+.hdr{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.ht{font-size:17px;font-weight:900;letter-spacing:2px;color:var(--accent);}
+.hs{font-size:10px;color:var(--text2);margin-top:1px;}
 .nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
 .nb{flex:1;padding:10px 2px 8px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text2);font-size:9px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;}
 .nb.active{border-bottom-color:var(--accent);color:var(--accent);}
-.ni{font-size:18px;}
+.ni{font-size:17px;}
 .pg{display:none;overflow-y:auto;padding:14px;padding-bottom:40px;}
 .pg.active{display:block;}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;}
 .ct{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;}
-.field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
 .field label{font-size:12px;color:var(--text2);}
-.field input,.field select{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:inherit;width:100%;-webkit-appearance:none;}
+.field input,.field select,.field textarea{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:15px;font-family:inherit;width:100%;-webkit-appearance:none;}
 .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888899' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
-.btn{width:100%;padding:14px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn{width:100%;padding:13px;border:none;border-radius:var(--r);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px;}
 .btn-p{background:var(--accent);color:#fff;}
-.btn-d{background:none;border:1px solid rgba(248,113,113,0.4);color:var(--red);border-radius:var(--rs);padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit;}
-.btn-e{background:none;border:1px solid rgba(74,158,255,0.4);color:var(--blue);border-radius:var(--rs);padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit;}
-.btn-add{width:100%;padding:11px;background:var(--bg3);border:1px dashed var(--border);border-radius:var(--rs);color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;margin-bottom:8px;}
-.ex-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;}
+.btn-g{background:var(--bg3);border:1px solid var(--border);color:var(--text);}
+.btn-add{width:100%;padding:11px;background:none;border:1px dashed var(--border);border-radius:var(--r);color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;margin:8px 0;}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px;}
 .ex-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.ex-num{font-size:13px;font-weight:700;color:var(--accent);}
-.sh{display:grid;grid-template-columns:22px 1fr 1fr 1fr 26px;gap:4px;margin-bottom:4px;}
-.sh span{font-size:10px;color:var(--text2);text-align:center;}
-.sr{display:grid;grid-template-columns:22px 1fr 1fr 1fr 26px;gap:4px;align-items:center;margin-bottom:5px;}
-.sr input,.sr select{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:8px 3px;color:var(--text);font-size:14px;text-align:center;font-family:inherit;width:100%;}
-.sn{text-align:center;font-size:11px;color:var(--text2);}
-.sd{background:none;border:none;color:var(--red);font-size:17px;cursor:pointer;padding:1px;line-height:1;}
-.as{background:none;border:none;color:var(--blue);font-size:12px;cursor:pointer;padding:5px 0;font-family:inherit;}
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:9px;}
-.sc-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.sc-acts{display:flex;gap:6px;flex-shrink:0;}
-.eh{padding:7px 0;border-top:1px solid var(--border);}
-.en{font-size:13px;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center;}
-.es{font-size:11px;color:var(--text2);line-height:1.6;}
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
-.bu{background:rgba(74,222,128,0.15);color:var(--green);}
-.bd{background:rgba(248,113,113,0.15);color:var(--red);}
-.be{background:var(--bg3);color:var(--text2);}
-.pc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:13px;margin-bottom:9px;cursor:pointer;}
-.ph{display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:8px;}
-.ph.open{display:block;}
-.pr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
-.pr:last-child{border-bottom:none;}
-.ci{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
-.ci:last-child{border-bottom:none;}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:flex-end;}
-.modal.open{display:flex;}
-.mi{background:var(--bg2);border-radius:18px 18px 0 0;padding:18px 14px 32px;width:100%;max-height:85vh;overflow-y:auto;}
-.mt{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
-.mc{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;}
-.sb{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;width:100%;color:var(--text);font-size:15px;font-family:inherit;margin-bottom:12px;}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 20px;border-radius:25px;font-size:13px;font-weight:600;opacity:0;transition:opacity 0.25s;pointer-events:none;z-index:999;white-space:nowrap;}
+.ex-num{font-size:11px;font-weight:700;color:var(--text2);}
+.sh{display:grid;grid-template-columns:30px 1fr 1fr 55px 32px;gap:5px;font-size:10px;color:var(--text2);padding:4px 0;margin-bottom:3px;}
+.sr{display:grid;grid-template-columns:30px 1fr 1fr 55px 32px;gap:5px;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);}
+.sr:last-child{border-bottom:none;}
+.sn{font-size:11px;font-weight:700;color:var(--text2);text-align:center;}
+.sr input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 4px;color:var(--text);font-size:14px;text-align:center;font-family:inherit;width:100%;}
+.sr select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 2px;color:var(--text);font-size:12px;font-family:inherit;width:100%;-webkit-appearance:none;text-align:center;}
+.sd{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:0;}
+.as{background:none;border:1px dashed var(--border);border-radius:var(--rs);padding:6px;color:var(--text2);font-size:12px;cursor:pointer;font-family:inherit;width:100%;margin-top:6px;}
+.btn-e{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:5px 10px;color:var(--text);font-size:11px;cursor:pointer;font-family:inherit;}
+.btn-d{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:var(--rs);padding:5px 10px;color:var(--red);font-size:11px;cursor:pointer;font-family:inherit;}
+/* EXTRAS (myo/rest pause) */
+.extras-row{display:flex;gap:4px;align-items:center;flex-wrap:wrap;margin-top:5px;padding-top:5px;border-top:1px dashed var(--border);}
+.extra-lbl{font-size:10px;color:var(--text2);margin-right:2px;}
+.extra-inp{background:var(--bg3);border:1px solid var(--green);border-radius:6px;padding:5px 6px;color:var(--green);font-size:13px;font-weight:700;text-align:center;width:44px;font-family:inherit;}
+.extra-sep{color:var(--text2);font-size:12px;}
+.extra-del{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px;}
+.btn-add-extra{background:none;border:1px solid var(--green);border-radius:var(--rs);padding:3px 9px;color:var(--green);font-size:11px;cursor:pointer;font-family:inherit;}
+/* CIRCUIT */
+.circuit-block{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:12px;margin-top:6px;}
+.circuit-tours-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.circuit-tours-row label{font-size:12px;color:var(--text2);}
+.circuit-tours-row input{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:15px;text-align:center;width:60px;font-family:inherit;}
+.circuit-ex-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);}
+.circuit-ex-row:last-child{border-bottom:none;}
+.circuit-ex-name{flex:1;font-size:12px;color:var(--text2);}
+.circuit-ex-inp{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:14px;text-align:center;width:70px;font-family:inherit;}
+/* HIST */
+.sess-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
+.sess-hdr{padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;}
+.sess-body{display:none;padding:0 14px 12px;}
+.sess-body.open{display:block;}
+.ex-hist{padding:8px 0;border-bottom:1px solid var(--border);}
+.ex-hist:last-child{border-bottom:none;}
+.set-row{font-size:12px;color:var(--text2);padding:2px 0;}
+/* PERFS */
+.perf-card{background:var(--bg3);border-radius:var(--rs);padding:11px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+/* MISC */
+.ib{background:var(--bg3);border-radius:var(--rs);padding:11px;font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 20px;border-radius:25px;font-size:13px;font-weight:600;opacity:0;transition:opacity 0.25s;pointer-events:none;z-index:999;}
 .toast.show{opacity:1;}
-.empty{text-align:center;padding:40px 14px;color:var(--text2);font-size:13px;line-height:1.6;}
 </style>
 </head>
 <body>
 <div class="hdr">
-  <div><div class="hdr-t">BLOOD &amp; TURBO</div><div class="hdr-s">Tracker de performance</div></div>
+  <div><div class="ht">BLOOD &amp; TURBO</div><div class="hs">TRACKER DE PERFORMANCE</div></div>
   <div id="hdr-date" style="font-size:11px;color:var(--text2)"></div>
 </div>
 <nav class="nav">
   <button class="nb active" onclick="SP('saisie')" id="nav-saisie"><span class="ni">+</span><span>Seance</span></button>
-  <button class="nb" onclick="SP('historique')" id="nav-historique"><span class="ni">&#x1F4CB;</span><span>Historique</span></button>
-  <button class="nb" onclick="SP('perfs')" id="nav-perfs"><span class="ni">&#x1F4CA;</span><span>Perfs</span></button>
-  <button class="nb" onclick="SP('exercices')" id="nav-exercices"><span class="ni">&#x2699;&#xFE0F;</span><span>Exos</span></button>
+  <button class="nb" onclick="SP('hist')" id="nav-hist"><span class="ni">📋</span><span>Historique</span></button>
+  <button class="nb" onclick="SP('perfs')" id="nav-perfs"><span class="ni">📊</span><span>Perfs</span></button>
+  <button class="nb" onclick="SP('exos')" id="nav-exos"><span class="ni">⚙️</span><span>Exos</span></button>
 </nav>
 <div class="pg active" id="pg-saisie"></div>
-<div class="pg" id="pg-historique"></div>
+<div class="pg" id="pg-hist"></div>
 <div class="pg" id="pg-perfs"></div>
-<div class="pg" id="pg-exercices"></div>
-<div class="modal" id="edit-modal">
-  <div class="mi">
-    <div class="mt"><span>Modifier la seance</span><button class="mc" onclick="CM()">x</button></div>
-    <div id="emb"></div>
-    <button class="btn btn-p" onclick="SE()" style="margin-top:8px">Enregistrer</button>
-  </div>
-</div>
+<div class="pg" id="pg-exos"></div>
 <div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-var DEX={
-  "J1 - DEADLIFT":["A. Deadlift Conventionnel","B. Tirage Vertical Unilateral Poulie Haute","C. Leg Curl Assis","D. Biceps Curl Incline","E. Crunch Poulie ou Toes to Bar"],
-  "J2 - BENCH":["A. Bench Press Barre","B. Squat Leger","C. OHP Barre Assis","D. Triceps Extension Barre EZ Allonge","E. Mollets Presse ou Debout"],
-  "J3 - DOS PULL OVER":["A. Releve de Buste Leste","B. Tirage Horizontal Machine","C. Pull Over Poulie ou Haltere","D. Biceps Curl Marteau Banc Incline","E. Crunch Poulie ou Toes to Bar"],
-  "J4 - SQUAT":["A. Squat Barre Libre","B. Bench Press Leger","C. Dips Lestes","D. Elevations Laterales Poulie Basse Unilateral","E. Mollets Presse ou Debout"],
-  "J5 - SDT HALTERES":["A. SDT Jambes Tendues Halteres","B. Tractions Prise Neutre","C. Rowing 1 Bras Type Bucheron","D. Biceps Curl Poulie Basse Supination","E. Crunch Poulie ou Toes to Bar"],
-  "J6 - CYCLIST INCLINE":["A. Cyclist Squat","B. Developpe Incline Barre ou Halteres","C. Leg Extension Machine","D. Elevations Laterales Halteres Banc Incline","E. Mollets Presse ou Debout"],
-  "Cardio / autre":[]
-}
-var db={sessions:[],customEx:{}};
-var editId=null,editEx=[];
-var curEx=[];
-var openP={};
+var DEX = {
+  "UPPER 1 - BENCH": ["Bench barre - Top set","Bench barre - Back-off 1","Bench barre - Back-off 2","Chin-Up","Band Pull Apart","Dev. Hammer convergente unilateral","Wide Grip Pull-Down","Ecartes halteres","Curl incline halteres","DB Rear Raise","DB Lateral Raise","Elev. lat. poulie basse"],
+  "UPPER 2 - MILITAIRE": ["Militaire assis barre - Top set","Militaire assis barre - Back-off 1","Militaire assis barre - Back-off 2","Chin-Up","Band Pull Apart","Bench Pause barre","Tirage horizontal poulie basse","Cable Extension","Cable Curl","Reverse Pec Deck","Elev. lat. poulie basse"],
+  "LOWER 1 - SQUAT": ["Squat barre haute - Top set","Squat barre haute - Back-off 1","Squat barre haute - Back-off 2","Tibialis Raises","Fentes bulgares","Calves Raises","Leg Extension","Leg Curl","Back Extension leste","Circuit abdos"],
+  "LOWER 2 - SDT": ["SDT conventionnel - Top set","SDT conventionnel - Back-off 1","SDT conventionnel - Back-off 2","DB Calves Raises","Cyclist Squat","Seated Calves Raises","BB Shrug","Rowing Hammer","Back Extension dos arrondi","Circuit abdos"],
+  "Cardio / autre": []
+};
 
-function sv(){try{localStorage.setItem('bt_v3',JSON.stringify(db));}catch(e){}}
-function ld(){try{var r=localStorage.getItem('bt_v3');if(r)db=JSON.parse(r);}catch(e){}}
+var CIRCUIT_EXOS = ["Toes to Bar","Crunch","Sit-up","Gainage cote","Releve de buste"];
+var MYO_KEYWORDS = ["Rest Pause","Myo Rep","Ecartes","Reverse Pec","Elev. lat","Curl incline","Cyclist Squat"];
 
-// Draft autosave - saves in-progress session
-function saveDraft(){
-  try{
-    var type=document.getElementById('s-type')?document.getElementById('s-type').value:'';
-    var date=document.getElementById('s-date')?document.getElementById('s-date').value:td();
-    var exs=curEx.filter(Boolean).map(function(ex,i){
-      var ri=curEx.indexOf(ex);
-      var sel=document.getElementById('es-'+ri);
-      var name=sel&&sel.value!=='__c__'?sel.value:(document.getElementById('eci-'+ri)?document.getElementById('eci-'+ri).value.trim():ex.name);
-      return {name:name,sets:ex.sets};
-    }).filter(function(ex){return ex.name;});
-    localStorage.setItem('bt_draft',JSON.stringify({date:date,type:type,exercises:exs,ts:Date.now()}));
-  }catch(e){}
-}
+var db = {sessions: [], customEx: {}};
+var editId = null;
+var curEx = [];
+var openSess = {};
+var perfChart = null;
 
-function loadDraft(){
-  try{
-    var r=localStorage.getItem('bt_draft');
-    if(r){var d=JSON.parse(r);return d;}
-  }catch(e){}
-  return null;
+function sv() { try { localStorage.setItem('bt_v4', JSON.stringify(db)); } catch(e) {} }
+function ld() { try { var r = localStorage.getItem('bt_v4'); if (r) db = JSON.parse(r); } catch(e) {} }
+function svDraft(d) { try { localStorage.setItem('bt_draft4', JSON.stringify(d)); } catch(e) {} }
+function ldDraft() { try { var r = localStorage.getItem('bt_draft4'); return r ? JSON.parse(r) : null; } catch(e) { return null; } }
+function clDraft() { try { localStorage.removeItem('bt_draft4'); } catch(e) {} }
+function toast(m) { var t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2200); }
+function td() { return new Date().toISOString().split('T')[0]; }
+function fd(s) { return new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', {weekday:'short', day:'numeric', month:'short'}); }
+
+function isCircuit(name) { return name && name.toLowerCase().indexOf('circuit') !== -1; }
+function isMyo(name) {
+  if (!name) return false;
+  return MYO_KEYWORDS.some(function(k) { return name.toLowerCase().indexOf(k.toLowerCase()) !== -1; });
 }
 
-function clearDraft(){
-  try{localStorage.removeItem('bt_draft');}catch(e){}
-}
-function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);}
-function td(){return new Date().toISOString().split('T')[0];}
-function fd(s){return new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});}
-function AE(){
-  var r={};
-  Object.keys(DEX).forEach(function(g){r[g]=[].concat(DEX[g]);});
-  Object.entries(db.customEx||{}).forEach(function(e){
-    if(!r[e[0]])r[e[0]]=[];
-    e[1].forEach(function(x){if(!r[e[0]].includes(x))r[e[0]].push(x);});
+function AE() {
+  var r = {};
+  Object.keys(DEX).forEach(function(g) { r[g] = [].concat(DEX[g]); });
+  Object.entries(db.customEx || {}).forEach(function(e) {
+    if (!r[e[0]]) r[e[0]] = [];
+    e[1].forEach(function(n) { if (!r[e[0]].includes(n)) r[e[0]].push(n); });
   });
   return r;
 }
 
-function SP(p){
-  document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('active');});
-  document.querySelectorAll('.nb').forEach(function(x){x.classList.remove('active');});
-  document.getElementById('pg-'+p).classList.add('active');
-  document.getElementById('nav-'+p).classList.add('active');
-  if(p==='saisie')RS();
-  if(p==='historique')RH();
-  if(p==='perfs')RP();
-  if(p==='exercices')RX();
+function SP(p) {
+  document.querySelectorAll('.pg').forEach(function(x) { x.classList.remove('active'); });
+  document.querySelectorAll('.nb').forEach(function(x) { x.classList.remove('active'); });
+  document.getElementById('pg-' + p).classList.add('active');
+  document.getElementById('nav-' + p).classList.add('active');
+  if (p === 'saisie') RS();
+  if (p === 'hist') RH();
+  if (p === 'perfs') RP();
+  if (p === 'exos') RX();
 }
 
-// ---- SAISIE ----
-function RS(){
-  var el=document.getElementById('pg-saisie');
-  var types=Object.keys(AE());
-  var draft=loadDraft();
-  var hasDraft=draft&&draft.exercises&&draft.exercises.length>0;
+// ── SAISIE ──
+function RS() {
+  var el = document.getElementById('pg-saisie');
+  var types = Object.keys(AE());
+  var draft = ldDraft();
+  var hasDraft = draft && draft.date === td() && !editId;
 
-  el.innerHTML=(hasDraft?'<div style="background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.3);border-radius:var(--r);padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">'
-  +'<div><div style="font-size:12px;font-weight:700;color:var(--blue)">Seance en cours recuperee</div>'
-  +'<div style="font-size:11px;color:var(--text2);margin-top:2px">'+draft.type+' — '+(draft.exercises.length)+' exo(s)</div></div>'
-  +'<div style="display:flex;gap:6px">'
-  +'<button class="btn-e" onclick="restoreDraft()">Reprendre</button>'
-  +'<button class="btn-d" onclick="discardDraft()">Suppr.</button>'
-  +'</div></div>':'')
-  +'<div class="card"><div class="ct">Nouvelle seance</div>'
-  +'<div class="field"><label>Date</label><input type="date" id="s-date" value="'+td()+'"/></div>'
-  +'<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
-  +types.map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></div></div>'
-  +'<div id="ex-list"></div>'
-  +'<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
-  +'<div style="margin-top:6px"><button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button></div>';
-  curEx=[];
+  el.innerHTML = (hasDraft ? '<div style="background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.3);border-radius:var(--r);padding:11px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:13px;font-weight:700;color:var(--blue)">Brouillon recupere</div><div style="display:flex;gap:6px"><button class="btn-e" onclick="restoreDraft()">Reprendre</button><button class="btn-d" onclick="discardDraft()">Suppr.</button></div></div>' : '')
+    + '<div class="card"><div class="ct">Nouvelle seance</div>'
+    + '<div class="field"><label>Date</label><input type="date" id="s-date" value="' + td() + '"/></div>'
+    + '<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
+    + types.map(function(t) { return '<option>' + t + '</option>'; }).join('') + '</select></div></div>'
+    + '<div id="ex-list"></div>'
+    + '<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
+    + '<button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button>';
+
+  curEx = [];
   AddEx();
 }
 
-function restoreDraft(){
-  var draft=loadDraft();
-  if(!draft)return;
-  var el=document.getElementById('pg-saisie');
-  var types=Object.keys(AE());
-  el.innerHTML='<div class="card"><div class="ct">Nouvelle seance</div>'
-  +'<div class="field"><label>Date</label><input type="date" id="s-date" value="'+draft.date+'"/></div>'
-  +'<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
-  +types.map(function(t){return '<option'+(t===draft.type?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div></div>'
-  +'<div id="ex-list"></div>'
-  +'<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
-  +'<div style="margin-top:6px"><button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button></div>';
-  curEx=[];
-  draft.exercises.forEach(function(ex){
-    var ae=AE();
-    var exList=ae[draft.type]||[];
-    var idx=curEx.length;
-    curEx.push({name:ex.name,sets:ex.sets.length?ex.sets:[{c:'',r:'',rpe:''}]});
-    var container=document.getElementById('ex-list');
-    var div=document.createElement('div');
-    div.className='ex-block';
-    var isCustom=!exList.includes(ex.name);
-    div.innerHTML='<div class="ex-hdr"><span class="ex-num">Exercice '+(idx+1)+'</span>'
-    +'<button class="btn-d" onclick="RemEx('+idx+')">Supprimer</button></div>'
-    +'<div class="field" style="margin-bottom:8px"><select id="es-'+idx+'" onchange="OnSel('+idx+')">'
-    +exList.map(function(e){return '<option value="'+e+'"'+(ex.name===e?' selected':'')+'>'+e+'</option>';}).join('')
-    +'<option value="__c__"'+(isCustom?' selected':'')+'>Autre (saisie libre)...</option>'
-    +'</select></div>'
-    +'<div id="ec-'+idx+'" style="display:'+(isCustom?'':'none')+';" class="field">'
-    +'<input type="text" id="eci-'+idx+'" placeholder="Nom" value="'+(isCustom?ex.name:'')+'" oninput="curEx['+idx+'].name=this.value;saveDraft()"/></div>'
-    +'<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
-    +'<div id="sr-'+idx+'"></div>'
-    +'<button class="as" onclick="AddSet('+idx+')">+ Serie</button>';
-    container.appendChild(div);
-    RndSets(idx);
+function RstEx() { renderExList(); }
+
+function getExList() {
+  var type = document.getElementById('s-type') ? document.getElementById('s-type').value : '';
+  return AE()[type] || [];
+}
+
+function renderExList() {
+  var container = document.getElementById('ex-list');
+  if (!container) return;
+  container.innerHTML = '';
+  curEx.forEach(function(ex, idx) {
+    if (!ex) return;
+    appendExBlock(container, ex, idx);
   });
 }
 
-function discardDraft(){
-  clearDraft();
-  RS();
+function appendExBlock(container, ex, idx) {
+  var exList = getExList();
+  var div = document.createElement('div');
+  div.className = 'ex-block';
+  div.id = 'exb-' + idx;
+
+  var isCustom = ex.name && !exList.includes(ex.name);
+  var selHtml = '<select id="es-' + idx + '" onchange="onExSel(' + idx + ')">'
+    + exList.map(function(e) { return '<option value="' + e + '"' + (ex.name === e ? ' selected' : '') + '>' + e + '</option>'; }).join('')
+    + '<option value="__c__"' + (isCustom ? ' selected' : '') + '>Autre...</option>'
+    + '</select>';
+
+  div.innerHTML = '<div class="ex-hdr"><span class="ex-num">Exercice ' + (idx+1) + '</span>'
+    + '<button class="btn-d" onclick="RemEx(' + idx + ')">Supprimer</button></div>'
+    + '<div class="field" style="margin-bottom:8px">' + selHtml + '</div>'
+    + '<div id="ec-' + idx + '" style="display:' + (isCustom ? '' : 'none') + ';" class="field">'
+    + '<input type="text" id="eci-' + idx + '" placeholder="Nom exercice" value="' + (isCustom ? ex.name : '') + '" oninput="curEx[' + idx + '].name=this.value;autoSave()"/></div>'
+    + '<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
+    + '<div id="sr-' + idx + '"></div>';
+
+  // Circuit block
+  if (isCircuit(ex.name)) {
+    var cb = document.createElement('div');
+    cb.id = 'circuit-' + idx;
+    div.appendChild(cb);
+  }
+
+  container.appendChild(div);
+  renderSets(idx);
 }
 
-function RstEx(){curEx=[];document.getElementById('ex-list').innerHTML='';AddEx();}
-
-function AddEx(){
-  var type=document.getElementById('s-type')?document.getElementById('s-type').value:'';
-  var ae=AE();
-  var exList=ae[type]||[];
-  curEx.push({name:exList[0]||'',sets:[{c:'',r:'',rpe:''}]});
-  RenderExList();
+function onExSel(idx) {
+  var sel = document.getElementById('es-' + idx);
+  var ec = document.getElementById('ec-' + idx);
+  if (sel.value === '__c__') {
+    ec.style.display = '';
+    curEx[idx].name = '';
+  } else {
+    ec.style.display = 'none';
+    curEx[idx].name = sel.value;
+    // Reset circuit data if switching away
+    if (!isCircuit(sel.value)) delete curEx[idx].circuit;
+  }
+  renderSets(idx);
+  autoSave();
 }
 
-function RenderExList(){
-  var container=document.getElementById('ex-list');
-  container.innerHTML='';
-  var active=curEx.filter(Boolean);
-  active.forEach(function(ex,visIdx){
-    var realIdx=curEx.indexOf(ex);
-    var type=document.getElementById('s-type')?document.getElementById('s-type').value:'';
-    var ae=AE();
-    var exList=ae[type]||[];
-    var div=document.createElement('div');
-    div.className='ex-block';
-    div.innerHTML='<div class="ex-hdr"><span class="ex-num">Exercice '+(visIdx+1)+'</span>'
-    +'<button class="btn-d" onclick="RemEx('+realIdx+')">Supprimer</button></div>'
-    +'<div class="field" style="margin-bottom:8px"><select id="es-'+realIdx+'" onchange="OnSel('+realIdx+')">'
-    +exList.map(function(e){return '<option value="'+e+'"'+(ex.name===e?' selected':'')+'>'+e+'</option>';}).join('')
-    +'<option value="__c__">Autre (saisie libre)...</option>'
-    +'</select></div>'
-    +'<div id="ec-'+realIdx+'" style="display:'+(exList.includes(ex.name)||!ex.name?'none':'')+';" class="field">'
-    +'<input type="text" id="eci-'+realIdx+'" placeholder="Nom de l\'exercice" value="'+(exList.includes(ex.name)?'':ex.name)+'" oninput="curEx['+realIdx+'].name=this.value"/></div>'
-    +'<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
-    +'<div id="sr-'+realIdx+'"></div>'
-    +'<button class="as" onclick="AddSet('+realIdx+')">+ Serie</button>';
-    container.appendChild(div);
-    RndSets(realIdx);
-  });
-}
+function renderSets(idx) {
+  var el = document.getElementById('sr-' + idx);
+  if (!el || !curEx[idx]) return;
+  var name = curEx[idx].name || '';
 
-function OnSel(idx){
-  var sel=document.getElementById('es-'+idx);
-  var cw=document.getElementById('ec-'+idx);
-  if(sel.value==='__c__'){cw.style.display='';curEx[idx].name='';}
-  else{cw.style.display='none';curEx[idx].name=sel.value;}
-}
-
-function RemEx(idx){curEx[idx]=null;RenderExList();saveDraft();}
-
-function AddSet(idx){
-  if(!curEx[idx])return;
-  curEx[idx].sets.push({c:'',r:'',rpe:''});
-  RndSets(idx);
-  saveDraft();
-}
-
-function RemSet(idx,si){
-  if(!curEx[idx]||curEx[idx].sets.length<=1)return;
-  curEx[idx].sets.splice(si,1);
-  RndSets(idx);
-  saveDraft();
-}
-
-function RndSets(idx){
-  var el=document.getElementById('sr-'+idx);
-  if(!el||!curEx[idx])return;
-  el.innerHTML=curEx[idx].sets.map(function(s,si){
-    return '<div class="sr"><div class="sn">'+(si+1)+'</div>'
-    +'<input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="'+(s.c||'')+'" onchange="curEx['+idx+'].sets['+si+'].c=this.value;saveDraft()"/>'
-    +'<input type="number" inputmode="numeric" placeholder="reps" value="'+(s.r||'')+'" onchange="curEx['+idx+'].sets['+si+'].r=this.value;saveDraft()"/>'
-    +'<select onchange="curEx['+idx+'].sets['+si+'].rpe=this.value;saveDraft()"><option value="">-</option>'
-    +[6,7,7.5,8,8.5,9,9.5,10].map(function(x){return '<option value="'+x+'"'+(s.rpe==x?' selected':'')+'>'+x+'</option>';}).join('')
-    +'</select><button class="sd" onclick="RemSet('+idx+','+si+')">x</button></div>';
-  }).join('');
-}
-
-function SaveSes(){
-  var date=document.getElementById('s-date').value;
-  var type=document.getElementById('s-type').value;
-  var exs=curEx.filter(Boolean).map(function(ex,i){
-    var ri=curEx.indexOf(ex);
-    var sel=document.getElementById('es-'+ri);
-    var name=sel&&sel.value!=='__c__'?sel.value:(document.getElementById('eci-'+ri)?document.getElementById('eci-'+ri).value.trim():ex.name);
-    return {name:name,sets:ex.sets.filter(function(s){return s.c||s.r;})};
-  }).filter(function(ex){return ex.name&&ex.sets.length;});
-  if(!exs.length){toast('Remplis au moins un exercice');return;}
-  db.sessions.push({id:Date.now(),date:date,type:type,exercises:exs});
-  sv();
-  clearDraft();
-  toast('Seance enregistree !');
-  curEx=[];
-  document.getElementById('ex-list').innerHTML='';
-  document.getElementById('s-date').value=td();
-  AddEx();
-}
-
-// ---- HISTORIQUE ----
-function RH(){
-  var el=document.getElementById('pg-historique');
-  if(!db.sessions.length){el.innerHTML='<div class="empty">Aucune seance enregistree.</div>';return;}
-  var sorted=[].concat(db.sessions).sort(function(a,b){return b.date.localeCompare(a.date);});
-  el.innerHTML=sorted.map(function(s){
-    var prev=sorted.find(function(ps){return ps.id!==s.id&&ps.type===s.type&&ps.date<s.date;});
-    return '<div class="sc"><div class="sc-hdr"><div>'
-    +'<div style="font-size:12px;color:var(--text2)">'+fd(s.date)+'</div>'
-    +'<div style="font-size:14px;font-weight:700;">'+s.type+'</div>'
-    +'</div><div class="sc-acts">'
-    +'<button class="btn-e" onclick="OE('+s.id+')">Modifier</button>'
-    +'<button class="btn-d" onclick="DS('+s.id+')">Suppr.</button>'
-    +'</div></div>'
-    +s.exercises.map(function(ex){
-      var pe=prev?prev.exercises.find(function(p){return p.name===ex.name;}):null;
-      var best=ex.sets.reduce(function(b,st){return(!b||parseFloat(st.c||0)>parseFloat(b.c||0))?st:b;},null);
-      var pb=pe?pe.sets.reduce(function(b,st){return(!b||parseFloat(st.c||0)>parseFloat(b.c||0))?st:b;},null):null;
-      var delta=best&&pb?parseFloat(best.c||0)-parseFloat(pb.c||0):null;
-      return '<div class="eh"><div class="en"><span>'+ex.name+'</span>'
-      +(delta!==null?'<span class="badge '+(delta>0?'bu':delta<0?'bd':'be')+'">'+(delta>0?'+':'')+delta+'kg</span>':'')
-      +'</div><div class="es">'+ex.sets.filter(function(s){return s.c||s.r;}).map(function(st,i){
-        return 'S'+(i+1)+': '+(st.c||'?')+'kg x '+(st.r||'?')+(st.rpe?' RPE'+st.rpe:'');
-      }).join(' | ')+'</div></div>';
-    }).join('')+'</div>';
-  }).join('');
-}
-
-function DS(id){
-  if(!confirm('Supprimer cette seance ?'))return;
-  db.sessions=db.sessions.filter(function(s){return s.id!==id;});
-  sv();toast('Seance supprimee');RH();
-}
-
-// ---- EDIT MODAL ----
-function OE(id){
-  var s=db.sessions.find(function(x){return x.id===id;});
-  if(!s)return;
-  editId=id;
-  editEx=JSON.parse(JSON.stringify(s.exercises));
-  document.getElementById('edit-modal').classList.add('open');
-  var body=document.getElementById('emb');
-  body.innerHTML='<div class="field"><label>Date</label><input type="date" id="edit-date" value="'+s.date+'"/></div>'
-  +'<div id="eel"></div><button class="btn-add" onclick="AEE()">+ Ajouter un exercice</button>';
-  REL();
-}
-
-function REL(){
-  var el=document.getElementById('eel');
-  if(!el)return;
-  var active=editEx.filter(Boolean);
-  el.innerHTML='';
-  active.forEach(function(ex,vi){
-    var ri=editEx.indexOf(ex);
-    var div=document.createElement('div');
-    div.className='ex-block';
-    div.innerHTML='<div class="ex-hdr"><span class="ex-num">Exercice '+(vi+1)+'</span>'
-    +'<button class="btn-d" onclick="REX('+ri+')">Supprimer</button></div>'
-    +'<div class="field" style="margin-bottom:8px">'
-    +'<input type="text" value="'+ex.name+'" oninput="editEx['+ri+'].name=this.value" style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px;color:var(--text);font-size:14px;width:100%;font-family:inherit"/></div>'
-    +'<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
-    +'<div id="esr-'+ri+'"></div>'
-    +'<button class="as" onclick="AES('+ri+')">+ Serie</button>';
-    el.appendChild(div);
-    RES(ri);
-  });
-}
-
-function RES(idx){
-  var el=document.getElementById('esr-'+idx);
-  if(!el||!editEx[idx])return;
-  el.innerHTML=editEx[idx].sets.map(function(s,si){
-    return '<div class="sr"><div class="sn">'+(si+1)+'</div>'
-    +'<input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="'+(s.c||'')+'" onchange="editEx['+idx+'].sets['+si+'].c=this.value"/>'
-    +'<input type="number" inputmode="numeric" placeholder="reps" value="'+(s.r||'')+'" onchange="editEx['+idx+'].sets['+si+'].r=this.value"/>'
-    +'<select onchange="editEx['+idx+'].sets['+si+'].rpe=this.value"><option value="">-</option>'
-    +[6,7,7.5,8,8.5,9,9.5,10].map(function(x){return '<option value="'+x+'"'+(s.rpe==x?' selected':'')+'>'+x+'</option>';}).join('')
-    +'</select><button class="sd" onclick="DES('+idx+','+si+')">x</button></div>';
-  }).join('');
-}
-
-function AEE(){editEx.push({name:'',sets:[{c:'',r:'',rpe:''}]});REL();}
-function REX(idx){editEx[idx]=null;REL();}
-function AES(idx){if(!editEx[idx])return;editEx[idx].sets.push({c:'',r:'',rpe:''});RES(idx);}
-function DES(idx,si){if(!editEx[idx]||editEx[idx].sets.length<=1)return;editEx[idx].sets.splice(si,1);RES(idx);}
-
-function SE(){
-  var date=document.getElementById('edit-date').value;
-  var exs=editEx.filter(Boolean).filter(function(ex){return ex.name&&ex.sets.length;});
-  if(!exs.length){toast('Au moins un exercice requis');return;}
-  var idx=db.sessions.findIndex(function(s){return s.id===editId;});
-  if(idx===-1)return;
-  db.sessions[idx].date=date;
-  db.sessions[idx].exercises=exs;
-  sv();CM();toast('Seance modifiee');RH();
-}
-
-function CM(){document.getElementById('edit-modal').classList.remove('open');editId=null;editEx=[];}
-
-// ---- PERFS ----
-function RP(){
-  var el=document.getElementById('pg-perfs');
-
-  // Build exercise list with all sessions data
-  var pm={};
-  db.sessions.forEach(function(s){
-    s.exercises.forEach(function(ex){
-      if(!pm[ex.name])pm[ex.name]=[];
-      var best=0;
-      ex.sets.forEach(function(set){if(parseFloat(set.c)>best)best=parseFloat(set.c);});
-      if(best>0)pm[ex.name].push({date:s.date,kg:best,type:s.type});
-    });
-  });
-
-  // Sort exercises alphabetically
-  var exNames=Object.keys(pm).sort();
-  if(!exNames.length){
-    el.innerHTML='<div style="text-align:center;padding:40px 14px;color:var(--text2);font-size:13px">Aucune seance enregistree.<br>Commence par saisir ta premiere seance.</div>';
+  // Circuit mode
+  if (isCircuit(name)) {
+    el.innerHTML = '';
+    var circ = curEx[idx].circuit || {tours: 3, reps: {}};
+    curEx[idx].circuit = circ;
+    var cb = document.createElement('div');
+    cb.className = 'circuit-block';
+    cb.innerHTML = '<div class="circuit-tours-row"><label>Nombre de tours</label>'
+      + '<input type="number" inputmode="numeric" min="1" max="10" value="' + (circ.tours || 3) + '" onchange="setCircuitTours(' + idx + ',this.value)"/></div>'
+      + CIRCUIT_EXOS.map(function(exName, ei) {
+          var key = 'ex' + ei;
+          return '<div class="circuit-ex-row">'
+            + '<span class="circuit-ex-name">' + exName + '</span>'
+            + '<input class="circuit-ex-inp" type="text" placeholder="reps" value="' + (circ.reps[key] || '') + '" '
+            + 'onchange="setCircuitReps(' + idx + ',\'' + key + '\',this.value)"/>'
+            + '</div>';
+        }).join('');
+    el.appendChild(cb);
     return;
   }
 
-  // Get selected exercise (stored in state)
-  if(!window._perfEx || !pm[window._perfEx]) window._perfEx = exNames[0];
-  var selEx = window._perfEx;
-  var data = pm[selEx] ? pm[selEx].sort(function(a,b){return a.date.localeCompare(b.date);}) : [];
-
-  // PR info
-  var pr = data.length ? data.reduce(function(a,b){return b.kg>a.kg?b:a;}) : null;
-  var first = data.length ? data[0] : null;
-  var last = data.length ? data[data.length-1] : null;
-  var delta = (first && last && first.kg!==last.kg) ? (last.kg - first.kg).toFixed(1) : null;
-
-  var html = '<div class="card"><div class="ct">Choisir un exercice</div>'
-    + '<div style="position:relative;margin-bottom:4px">'
-    + '<select id="ex-sel" onchange="window._perfEx=this.value;RP()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none">'
-    + exNames.map(function(n){return '<option value="'+n+'"'+(n===selEx?' selected':'')+'>'+n+'</option>';}).join('')
-    + '</select>'
-    + '<div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text2);pointer-events:none">▼</div>'
-    + '</div></div>';
-
-  if(data.length > 0){
-    // Stats row
-    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px">'
-      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
-      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">PR</div>'
-      + '<div style="font-size:18px;font-weight:700;color:var(--gold)">'+(pr?pr.kg:'-')+' kg</div>'
-      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(pr?fd(pr.date):'')+'</div>'
-      + '</div>'
-      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
-      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">DERNIERE</div>'
-      + '<div style="font-size:18px;font-weight:700;color:var(--text)">'+(last?last.kg:'-')+' kg</div>'
-      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(last?fd(last.date):'')+'</div>'
-      + '</div>'
-      + '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;text-align:center">'
-      + '<div style="font-size:9px;color:var(--text2);margin-bottom:3px">EVOLUTION</div>'
-      + '<div style="font-size:18px;font-weight:700;color:'+(delta?(parseFloat(delta)>0?'var(--green)':'var(--red)'):'var(--text2)')+'">'+(delta?(parseFloat(delta)>0?'+':'')+delta+' kg':'—')+'</div>'
-      + '<div style="font-size:10px;color:var(--text2);margin-top:2px">'+(data.length)+' seances</div>'
-      + '</div></div>';
-
-    // Chart
-    if(data.length > 1){
-      html += '<div class="card"><div style="height:200px;position:relative"><canvas id="perf-chart"></canvas></div></div>';
+  var useMyo = isMyo(name);
+  el.innerHTML = curEx[idx].sets.map(function(s, si) {
+    var extrasHtml = '';
+    if (useMyo) {
+      var extras = s.extras || [];
+      extrasHtml = '<div class="extras-row">'
+        + '<span class="extra-lbl">+</span>'
+        + extras.map(function(r, ri) {
+            return '<input class="extra-inp" type="number" inputmode="numeric" value="' + (r || '') + '" '
+              + 'onchange="setExtra(' + idx + ',' + si + ',' + ri + ',this.value)"/>'
+              + (ri < extras.length - 1 ? '<span class="extra-sep">+</span>' : '')
+              + '<button class="extra-del" onclick="remExtra(' + idx + ',' + si + ',' + ri + ')">x</button>';
+          }).join('')
+        + (extras.length > 0 ? '<span class="extra-sep">+</span>' : '')
+        + '<button class="btn-add-extra" onclick="addExtra(' + idx + ',' + si + ')">+ rep</button>'
+        + '</div>';
     }
+    return '<div class="sr"><div class="sn">' + (si+1) + '</div>'
+      + '<input type="number" inputmode="decimal" step="0.5" placeholder="kg" value="' + (s.c||'') + '" onchange="curEx[' + idx + '].sets[' + si + '].c=this.value;autoSave()"/>'
+      + '<input type="number" inputmode="numeric" placeholder="reps" value="' + (s.r||'') + '" onchange="curEx[' + idx + '].sets[' + si + '].r=this.value;autoSave()"/>'
+      + '<select onchange="curEx[' + idx + '].sets[' + si + '].rpe=this.value;autoSave()"><option value="">-</option>'
+      + [6,7,7.5,8,8.5,9,9.5,10].map(function(x) { return '<option value="' + x + '"' + (s.rpe == x ? ' selected' : '') + '>' + x + '</option>'; }).join('')
+      + '</select><button class="sd" onclick="RemSet(' + idx + ',' + si + ')">x</button></div>'
+      + extrasHtml;
+  }).join('');
+}
 
-    // History list
-    html += '<div class="card"><div class="ct">Historique</div>'
-      + data.slice().reverse().map(function(d,i,arr){
-          var prev=arr[i+1];
-          var diff=prev?((d.kg-prev.kg).toFixed(1)):null;
-          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">'
-            +'<div><div style="font-size:11px;color:var(--text2)">'+fd(d.date)+'</div>'
-            +'<div style="font-size:12px;color:var(--text2)">'+d.type+'</div></div>'
-            +'<div style="display:flex;align-items:center;gap:8px">'
-            +(diff!==null?'<span style="font-size:11px;padding:2px 7px;border-radius:20px;background:'+(parseFloat(diff)>0?'rgba(74,222,128,0.15)':parseFloat(diff)<0?'rgba(248,113,113,0.15)':'rgba(136,136,153,0.15)')+';color:'+(parseFloat(diff)>0?'var(--green)':parseFloat(diff)<0?'var(--red)':'var(--text2)')+';">'+(parseFloat(diff)>0?'+':'')+diff+'</span>':'')
-            +'<div style="font-size:16px;font-weight:700;color:var(--accent)">'+d.kg+' kg</div>'
-            +'</div></div>';
-        }).join('')
-      + '</div>';
+function setCircuitTours(idx, val) { if (curEx[idx] && curEx[idx].circuit) { curEx[idx].circuit.tours = parseInt(val) || 3; autoSave(); } }
+function setCircuitReps(idx, key, val) { if (curEx[idx] && curEx[idx].circuit) { curEx[idx].circuit.reps[key] = val; autoSave(); } }
+function addExtra(idx, si) { if (!curEx[idx].sets[si].extras) curEx[idx].sets[si].extras = []; curEx[idx].sets[si].extras.push(''); renderSets(idx); autoSave(); }
+function remExtra(idx, si, ri) { curEx[idx].sets[si].extras.splice(ri, 1); renderSets(idx); autoSave(); }
+function setExtra(idx, si, ri, val) { if (!curEx[idx].sets[si].extras) curEx[idx].sets[si].extras = []; curEx[idx].sets[si].extras[ri] = parseInt(val) || 0; autoSave(); }
+
+function AddEx() {
+  var idx = curEx.length;
+  curEx.push({name: '', sets: [{c:'',r:'',rpe:''}]});
+  var container = document.getElementById('ex-list');
+  if (!container) return;
+  appendExBlock(container, curEx[idx], idx);
+  autoSave();
+}
+
+function RemEx(idx) { curEx[idx] = null; renderExList(); autoSave(); }
+
+function AddSet(idx) { if (!curEx[idx]) return; curEx[idx].sets.push({c:'',r:'',rpe:''}); renderSets(idx); autoSave(); }
+function RemSet(idx, si) { if (!curEx[idx] || curEx[idx].sets.length <= 1) return; curEx[idx].sets.splice(si, 1); renderSets(idx); autoSave(); }
+
+function autoSave() {
+  try {
+    var type = document.getElementById('s-type') ? document.getElementById('s-type').value : '';
+    var date = document.getElementById('s-date') ? document.getElementById('s-date').value : td();
+    var exs = curEx.filter(Boolean).map(function(ex) {
+      return {name: ex.name, sets: ex.sets, circuit: ex.circuit || null};
+    });
+    svDraft({date: date, type: type, exercises: exs});
+  } catch(e) {}
+}
+
+function restoreDraft() {
+  var draft = ldDraft();
+  if (!draft) return;
+  var el = document.getElementById('pg-saisie');
+  var types = Object.keys(AE());
+  el.innerHTML = '<div class="card"><div class="ct">Nouvelle seance</div>'
+    + '<div class="field"><label>Date</label><input type="date" id="s-date" value="' + (draft.date || td()) + '"/></div>'
+    + '<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
+    + types.map(function(t) { return '<option' + (t === draft.type ? ' selected' : '') + '>' + t + '</option>'; }).join('')
+    + '</select></div></div>'
+    + '<div id="ex-list"></div>'
+    + '<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
+    + '<button class="btn btn-p" onclick="SaveSes()">Enregistrer la seance</button>';
+  curEx = [];
+  (draft.exercises || []).forEach(function(ex) {
+    var idx = curEx.length;
+    curEx.push({name: ex.name, sets: ex.sets && ex.sets.length ? ex.sets : [{c:'',r:'',rpe:''}], circuit: ex.circuit || null});
+    var container = document.getElementById('ex-list');
+    appendExBlock(container, curEx[idx], idx);
+  });
+}
+
+function discardDraft() { clDraft(); RS(); }
+
+function SaveSes() {
+  var date = document.getElementById('s-date').value;
+  var type = document.getElementById('s-type').value;
+  var exs = curEx.filter(Boolean).map(function(ex) {
+    var sel = document.getElementById('es-' + curEx.indexOf(ex));
+    var eci = document.getElementById('eci-' + curEx.indexOf(ex));
+    var name = (sel && sel.value !== '__c__') ? sel.value : (eci ? eci.value.trim() : ex.name);
+    if (isCircuit(name)) {
+      return {name: name, sets: [], circuit: ex.circuit || {}};
+    }
+    var sets = ex.sets.filter(function(s) { return s.c || s.r; });
+    return {name: name, sets: sets};
+  }).filter(function(ex) { return ex.name && (ex.sets.length || ex.circuit); });
+
+  if (!exs.length) { toast('Remplis au moins un exercice'); return; }
+
+  if (editId) {
+    var idx = db.sessions.findIndex(function(s) { return s.id === editId; });
+    if (idx >= 0) db.sessions[idx] = {id: editId, date: date, type: type, exercises: exs};
+    editId = null;
   } else {
-    html += '<div style="text-align:center;padding:30px;color:var(--text2);font-size:13px">Aucune donnee pour cet exercice.</div>';
+    db.sessions.push({id: Date.now(), date: date, type: type, exercises: exs});
   }
+  sv(); clDraft();
+  toast('Seance enregistree !');
+  curEx = [];
+  SP('hist');
+}
 
-  el.innerHTML = html;
+// ── HISTORIQUE ──
+function RH() {
+  var el = document.getElementById('pg-hist');
+  var sorted = db.sessions.slice().sort(function(a,b) { return b.date.localeCompare(a.date); });
+  if (!sorted.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Aucune seance enregistree.</div>';
+    return;
+  }
+  el.innerHTML = sorted.map(function(s) {
+    var isOpen = openSess[s.id];
+    return '<div class="sess-card">'
+      + '<div class="sess-hdr" onclick="toggleSess(' + s.id + ')">'
+      + '<div><div style="font-size:13px;font-weight:700">' + fd(s.date) + '</div>'
+      + '<div style="font-size:11px;color:var(--text2)">' + s.type + ' · ' + s.exercises.length + ' exo(s)</div></div>'
+      + '<div style="display:flex;gap:6px">'
+      + '<button class="btn-e" onclick="event.stopPropagation();editSess(' + s.id + ')">Modifier</button>'
+      + '<button class="btn-d" onclick="event.stopPropagation();delSess(' + s.id + ')">Suppr.</button>'
+      + '</div></div>'
+      + '<div class="sess-body' + (isOpen ? ' open' : '') + '" id="sb-' + s.id + '">'
+      + s.exercises.map(function(ex) {
+          return '<div class="ex-hist">'
+            + '<div style="font-size:12px;font-weight:600;margin-bottom:4px">' + ex.name + '</div>'
+            + (ex.circuit ? renderCircuitHist(ex.circuit) : ex.sets.map(function(s,i) {
+                var base = (i+1) + '. ' + (s.c||'—') + 'kg × ' + (s.r||'—') + ' reps' + (s.rpe ? ' @ RPE' + s.rpe : '');
+                var ext = s.extras && s.extras.length ? ' + ' + s.extras.join('+') : '';
+                return '<div class="set-row">' + base + ext + '</div>';
+              }).join(''))
+            + '</div>';
+        }).join('')
+      + '</div></div>';
+  }).join('');
+}
 
-  // Draw chart
-  if(data.length > 1){
-    setTimeout(function(){
-      var ctx = document.getElementById('perf-chart');
-      if(!ctx) return;
-      if(window._perfChart){window._perfChart.destroy();window._perfChart=null;}
-      var isPR = data.map(function(d){
-        return d.kg === pr.kg;
-      });
-      window._perfChart = new Chart(ctx, {
+function renderCircuitHist(c) {
+  if (!c) return '';
+  var html = '<div style="font-size:11px;color:var(--text2)">' + (c.tours||'?') + ' tours</div>';
+  CIRCUIT_EXOS.forEach(function(name, i) {
+    var key = 'ex' + i;
+    if (c.reps && c.reps[key]) html += '<div class="set-row">' + name + ' : ' + c.reps[key] + '</div>';
+  });
+  return html;
+}
+
+function toggleSess(id) { openSess[id] = !openSess[id]; RH(); }
+
+function editSess(id) {
+  var s = db.sessions.find(function(x) { return x.id === id; });
+  if (!s) return;
+  editId = id;
+  var el = document.getElementById('pg-saisie');
+  var types = Object.keys(AE());
+  el.innerHTML = '<div class="card"><div class="ct">Modifier la seance</div>'
+    + '<div class="field"><label>Date</label><input type="date" id="s-date" value="' + s.date + '"/></div>'
+    + '<div class="field"><label>Type</label><select id="s-type" onchange="RstEx()">'
+    + types.map(function(t) { return '<option' + (t === s.type ? ' selected' : '') + '>' + t + '</option>'; }).join('')
+    + '</select></div></div>'
+    + '<div id="ex-list"></div>'
+    + '<button class="btn-add" onclick="AddEx()">+ Ajouter un exercice</button>'
+    + '<button class="btn btn-p" onclick="SaveSes()">Enregistrer les modifications</button>';
+  curEx = [];
+  s.exercises.forEach(function(ex) {
+    var idx = curEx.length;
+    curEx.push({name: ex.name, sets: ex.sets && ex.sets.length ? ex.sets : [{c:'',r:'',rpe:''}], circuit: ex.circuit || null});
+    var container = document.getElementById('ex-list');
+    appendExBlock(container, curEx[idx], idx);
+  });
+  SP('saisie');
+}
+
+function delSess(id) {
+  if (!confirm('Supprimer cette seance ?')) return;
+  db.sessions = db.sessions.filter(function(s) { return s.id !== id; });
+  sv(); toast('Seance supprimee'); RH();
+}
+
+// ── PERFS ──
+function RP() {
+  var el = document.getElementById('pg-perfs');
+  var pm = {};
+  db.sessions.forEach(function(s) {
+    s.exercises.forEach(function(ex) {
+      if (isCircuit(ex.name) || !ex.sets) return;
+      if (!pm[ex.name]) pm[ex.name] = [];
+      var best = 0;
+      ex.sets.forEach(function(set) { if (parseFloat(set.c) > best) best = parseFloat(set.c); });
+      if (best > 0) pm[ex.name].push({date: s.date, kg: best});
+    });
+  });
+  var exNames = Object.keys(pm).sort();
+  if (!exNames.length) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text2)">Aucune donnee disponible.</div>';
+    return;
+  }
+  if (!window._perfEx || !pm[window._perfEx]) window._perfEx = exNames[0];
+  var selEx = window._perfEx;
+  var data = pm[selEx].sort(function(a,b) { return a.date.localeCompare(b.date); });
+  var pr = data.reduce(function(a,b) { return b.kg > a.kg ? b : a; });
+  var last = data[data.length-1];
+  var first = data[0];
+  var delta = last.kg !== first.kg ? (last.kg - first.kg).toFixed(1) : null;
+
+  el.innerHTML = '<div class="card"><div class="ct">Choisir un exercice</div>'
+    + '<div style="position:relative"><select onchange="window._perfEx=this.value;RP()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;color:var(--text);font-size:14px;font-family:inherit;width:100%;-webkit-appearance:none">'
+    + exNames.map(function(n) { return '<option value="' + n + '"' + (n===selEx?' selected':'') + '>' + n + '</option>'; }).join('')
+    + '</select></div></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:10px">'
+    + '<div class="perf-card" style="flex-direction:column;align-items:flex-start"><div style="font-size:9px;color:var(--text2);margin-bottom:3px">PR</div><div style="font-size:18px;font-weight:700;color:var(--gold)">' + pr.kg + ' kg</div><div style="font-size:10px;color:var(--text2)">' + fd(pr.date) + '</div></div>'
+    + '<div class="perf-card" style="flex-direction:column;align-items:flex-start"><div style="font-size:9px;color:var(--text2);margin-bottom:3px">DERNIERE</div><div style="font-size:18px;font-weight:700">' + last.kg + ' kg</div><div style="font-size:10px;color:var(--text2)">' + fd(last.date) + '</div></div>'
+    + '<div class="perf-card" style="flex-direction:column;align-items:flex-start"><div style="font-size:9px;color:var(--text2);margin-bottom:3px">EVOLUTION</div><div style="font-size:18px;font-weight:700;color:' + (delta?(parseFloat(delta)>0?'var(--green)':'var(--red)'):'var(--text2)') + '">' + (delta?(parseFloat(delta)>0?'+':'')+delta+' kg':'—') + '</div><div style="font-size:10px;color:var(--text2)">' + data.length + ' seances</div></div>'
+    + '</div>'
+    + (data.length>1?'<div class="card"><div style="height:180px;position:relative"><canvas id="pc"></canvas></div></div>':'')
+    + '<div class="card"><div class="ct">Historique</div>'
+    + data.slice().reverse().map(function(d,i,arr) {
+        var prev = arr[i+1];
+        var diff = prev ? (d.kg-prev.kg).toFixed(1) : null;
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">'
+          + '<div style="font-size:12px;color:var(--text2)">' + fd(d.date) + '</div>'
+          + '<div style="display:flex;align-items:center;gap:8px">'
+          + (diff!==null?'<span style="font-size:11px;padding:2px 7px;border-radius:20px;background:'+(parseFloat(diff)>0?'rgba(74,222,128,0.15)':parseFloat(diff)<0?'rgba(248,113,113,0.15)':'rgba(136,136,153,0.15)')+';color:'+(parseFloat(diff)>0?'var(--green)':parseFloat(diff)<0?'var(--red)':'var(--text2)')+';">'+(parseFloat(diff)>0?'+':'')+diff+'</span>':'')
+          + '<div style="font-size:16px;font-weight:700;color:var(--accent)">' + d.kg + ' kg</div>'
+          + '</div></div>';
+      }).join('')
+    + '</div>';
+
+  if (data.length > 1) {
+    setTimeout(function() {
+      var ctx = document.getElementById('pc');
+      if (!ctx) return;
+      if (perfChart) { perfChart.destroy(); perfChart = null; }
+      perfChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: data.map(function(d){return fd(d.date);}),
+          labels: data.map(function(d) { return fd(d.date); }),
           datasets: [{
-            data: data.map(function(d){return d.kg;}),
-            borderColor: 'var(--accent)',
-            backgroundColor: 'rgba(233,69,96,0.08)',
-            pointBackgroundColor: data.map(function(d){return d.kg===pr.kg?'var(--gold)':'var(--accent)';}),
-            pointBorderColor: data.map(function(d){return d.kg===pr.kg?'var(--gold)':'var(--accent)';}),
-            pointRadius: data.map(function(d){return d.kg===pr.kg?7:4;}),
-            tension: 0.3,
-            fill: true,
-            borderWidth: 2
+            data: data.map(function(d) { return d.kg; }),
+            borderColor: '#e94560', backgroundColor: 'rgba(233,69,96,0.08)',
+            pointBackgroundColor: data.map(function(d) { return d.kg === pr.kg ? '#f5a623' : '#e94560'; }),
+            pointRadius: 5, tension: 0.3, fill: true, borderWidth: 2
           }]
         },
         options: {
           responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: {display:false},
-            tooltip: {callbacks:{label:function(ctx){return ctx.parsed.y+' kg'+(ctx.parsed.y===pr.kg?' ★ PR':'');}}}
-          },
+          plugins: { legend: { display: false } },
           scales: {
-            x: {ticks:{font:{size:10},maxRotation:40,maxTicksLimit:8},grid:{display:false}},
-            y: {ticks:{font:{size:11}},grid:{color:'rgba(128,128,128,0.1)'}}
+            x: { ticks: { font:{size:10}, maxRotation:40, maxTicksLimit:7 }, grid: { display:false } },
+            y: { ticks: { font:{size:11} }, grid: { color:'rgba(128,128,128,0.1)' } }
           }
         }
       });
@@ -547,48 +521,69 @@ function RP(){
   }
 }
 
-
-function RX(){
-  var el=document.getElementById('pg-exercices');
-  var types=Object.keys(AE());
-  var hc=Object.values(db.customEx||{}).some(function(a){return a.length>0;});
-  el.innerHTML='<div class="card"><div class="ct">Ajouter un exercice</div>'
-  +'<div class="field"><label>Nom</label><input type="text" id="nxn" placeholder="ex: Leg press unilateral"/></div>'
-  +'<div class="field"><label>Seance</label><select id="nxg">'
-  +types.map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></div>'
-  +'<button class="btn btn-p" onclick="ACX()">Ajouter</button></div>'
-  +'<div class="card" style="margin-top:10px"><div class="ct">Sauvegarde des donnees</div>'
-  +'<div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Exporte tes donnees en fichier JSON pour les sauvegarder. Importe un fichier pour restaurer une sauvegarde.</div>'
-  +'<button class="btn btn-p" onclick="exportData()" style="margin-bottom:8px">&#x1F4E5; Exporter mes donnees</button>'
-  +'<button class="btn" style="background:var(--bg3);color:var(--text);border:1px solid var(--border)" onclick="importData()">&#x1F4E4; Importer une sauvegarde</button></div>'
-  +(hc?'<div class="card"><div class="ct">Exercices personnalises</div>'
-  +Object.entries(db.customEx||{}).filter(function(e){return e[1].length;}).map(function(e){
-    return '<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">'+e[0]+'</div>'
-    +e[1].map(function(ex){
-      return '<div class="ci"><span>'+ex+'</span><button class="btn-d" onclick="DCX(\''+e[0].replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\',\''+ex.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')" >Suppr.</button></div>';
-    }).join('')+'</div>';
-  }).join('')+'</div>':'');
+// ── EXOS ──
+function RX() {
+  var el = document.getElementById('pg-exos');
+  var types = Object.keys(AE());
+  el.innerHTML = '<div class="card"><div class="ct">Ajouter un exercice</div>'
+    + '<div class="field"><label>Categorie</label><select id="ex-cat">'
+    + types.map(function(t) { return '<option>' + t + '</option>'; }).join('')
+    + '</select></div>'
+    + '<div class="field"><label>Nom</label><input type="text" id="ex-name" placeholder="Nom de l\'exercice"/></div>'
+    + '<button class="btn btn-p" onclick="addCustomEx()">Ajouter</button></div>'
+    + '<div class="card"><div class="ct">Sauvegarde</div>'
+    + '<div class="ib">Exporte tes donnees pour ne pas les perdre.</div>'
+    + '<button class="btn btn-p" onclick="exportData()" style="margin-bottom:8px">Exporter mes donnees</button>'
+    + '<button class="btn btn-g" onclick="importData()">Importer une sauvegarde</button>'
+    + '</div>';
 }
 
-function ACX(){
-  var name=document.getElementById('nxn').value.trim();
-  var group=document.getElementById('nxg').value;
-  if(!name){toast('Entre un nom');return;}
-  if(!db.customEx[group])db.customEx[group]=[];
-  if(db.customEx[group].includes(name)){toast('Deja existant');return;}
-  db.customEx[group].push(name);sv();
-  document.getElementById('nxn').value='';
-  toast('Exercice ajoute');RX();
+function addCustomEx() {
+  var cat = document.getElementById('ex-cat').value;
+  var name = document.getElementById('ex-name').value.trim();
+  if (!name) { toast('Entre un nom'); return; }
+  if (!db.customEx[cat]) db.customEx[cat] = [];
+  if (db.customEx[cat].includes(name)) { toast('Deja existant'); return; }
+  db.customEx[cat].push(name);
+  sv(); toast('Exercice ajoute'); RX();
 }
 
-function DCX(g,n){
-  if(!db.customEx[g])return;
-  db.customEx[g]=db.customEx[g].filter(function(e){return e!==n;});
-  sv();toast('Exo supprime');RX();
+function exportData() {
+  var data = JSON.stringify(db, null, 2);
+  var blob = new Blob([data], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'bt_tracker_' + td() + '.json';
+  a.click(); URL.revokeObjectURL(url); toast('Exporte');
 }
 
+function importData() {
+  var input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = function(e) {
+    var file = e.target.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        var p = JSON.parse(ev.target.result);
+        if (!p.sessions) { toast('Fichier invalide'); return; }
+        if (!confirm('Restaurer ? Les donnees actuelles seront remplacees.')) return;
+        db = p; sv(); toast('Donnees restaurees'); SP('hist');
+      } catch(e) { toast('Erreur de lecture'); }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+// ── INIT ──
 ld();
-document.getElementById('hdr-date').textContent=fd(td());
+// Migrate from old version
+var old = localStorage.getItem('bt_v3');
+if (old && !localStorage.getItem('bt_v4')) {
+  try { var op = JSON.parse(old); if (op.sessions) { db = op; sv(); } } catch(e) {}
+}
+document.getElementById('hdr-date').textContent = fd(td());
 RS();
 </script>
 </body>
