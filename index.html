@@ -95,10 +95,10 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 var DEX = {
-  "UPPER 1 - BENCH": ["Bench barre - Top set","Bench barre - Back-off 1","Bench barre - Back-off 2","Chin-Up","Band Pull Apart","Dev. Hammer convergente unilateral","Wide Grip Pull-Down","Ecartes halteres","Curl incline halteres","DB Rear Raise","DB Lateral Raise","Elev. lat. poulie basse"],
-  "UPPER 2 - MILITAIRE": ["Militaire assis barre - Top set","Militaire assis barre - Back-off 1","Militaire assis barre - Back-off 2","Chin-Up","Band Pull Apart","Bench Pause barre","Tirage horizontal poulie basse","Cable Extension","Cable Curl","Reverse Pec Deck","Elev. lat. poulie basse"],
-  "LOWER 1 - SQUAT": ["Squat barre haute - Top set","Squat barre haute - Back-off 1","Squat barre haute - Back-off 2","Tibialis Raises","Fentes bulgares","Calves Raises","Leg Extension","Leg Curl","Back Extension leste","Circuit abdos"],
-  "LOWER 2 - SDT": ["SDT conventionnel - Top set","SDT conventionnel - Back-off 1","SDT conventionnel - Back-off 2","DB Calves Raises","Cyclist Squat","Seated Calves Raises","BB Shrug","Rowing Hammer","Back Extension dos arrondi","Circuit abdos"],
+  "UPPER 1 - BENCH": ["Bench barre","Chin-Up","Band Pull Apart","Dev. Hammer convergente unilateral","Wide Grip Pull-Down","Ecartes halteres","Curl incline halteres","DB Rear Raise","DB Lateral Raise","Elev. lat. poulie basse"],
+  "UPPER 2 - MILITAIRE": ["Militaire assis barre","Chin-Up","Band Pull Apart","Bench Pause barre","Tirage horizontal poulie basse","Cable Extension","Cable Curl","Reverse Pec Deck","Elev. lat. poulie basse"],
+  "LOWER 1 - SQUAT": ["Squat barre haute","Tibialis Raises","Fentes bulgares","Calves Raises","Leg Extension","Leg Curl","Back Extension leste","Circuit abdos"],
+  "LOWER 2 - SDT": ["SDT conventionnel","DB Calves Raises","Cyclist Squat","Seated Calves Raises","BB Shrug","Rowing Hammer","Back Extension dos arrondi","Circuit abdos"],
   "Cardio / autre": []
 };
 
@@ -202,7 +202,8 @@ function appendExBlock(container, ex, idx) {
     + '<div id="ec-' + idx + '" style="display:' + (isCustom ? '' : 'none') + ';" class="field">'
     + '<input type="text" id="eci-' + idx + '" placeholder="Nom exercice" value="' + (isCustom ? ex.name : '') + '" oninput="curEx[' + idx + '].name=this.value;autoSave()"/></div>'
     + '<div class="sh"><span>#</span><span>kg</span><span>Reps</span><span>RPE</span><span></span></div>'
-    + '<div id="sr-' + idx + '"></div>';
+    + '<div id="sr-' + idx + '"></div>'
+    + '<button class="as" onclick="AddSet(' + idx + ')">+ Serie</button>';
 
   // Circuit block
   if (isCircuit(ex.name)) {
@@ -577,6 +578,12 @@ function importData() {
 }
 
 // ── INIT ──
+// Save when app goes to background (switching apps on mobile)
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) { autoSave(); }
+});
+// Save on page hide (iOS)
+window.addEventListener('pagehide', function() { autoSave(); });
 ld();
 // Migrate from old version
 var old = localStorage.getItem('bt_v3');
